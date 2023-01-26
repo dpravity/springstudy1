@@ -1,5 +1,8 @@
 package com.example.springboot;
 
+//import org.springframework.boot.SpringApplication;
+//import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.example.springboot.contorller.HelloServletController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -8,29 +11,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
 
-public class SpringServletApplication {
+//@SpringBootApplication
+public class SpringServletOriginApplication {
 
+//    public static void main(String[] args) {
+//        SpringApplication.run(SpringbootApplication.class, args);
+//    }
     public static void main(String[] args) {
         System.out.println("hello container less standard alone");
-
-        // 스프링 컨테이너 생성
-        // ApplicationContext : 애플리케이션을 구성하는 정보를 담고 있음, Bean, Resources 등등
-        // ApplicationContext 가 결국 스프링 컨테이너가 된다
-        GenericApplicationContext applicationContext = new GenericApplicationContext();
-        // 서블릿은 new Object 를 하여 add 하는 방식
-        // 스프링 컨테이너는 오브젝트를 만들어 직업 add 도 가능하나
-        // 일반적으로는 어떤 클래스를 이용하여 Bean Object 를 생성할 것인가 라고 하는 Meta 정보를 넣어주는 방식으로 만듬
-        applicationContext.registerBean(HelloServletController.class);
-        // applicationContext 가 자신가 가진 구성 정보를 이용해서 컨테이너를 초기화
-        applicationContext.refresh();
-
         ServletWebServerFactory servletWebServerFactory = new TomcatServletWebServerFactory();
         /*
         1. 클라이언트 요청사항이 각 서블릿에 직접 매핑이 되면 공통적으로 처리하는 것이 문제, 기본 서블릿 기능으로는 한계가 있음
@@ -45,8 +39,8 @@ public class SpringServletApplication {
         // 모든 서블릿의 공통 처리를 위한 front controller 생성
         WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> {
             // 서블릿 초기화하는 부분에
-            // front controller 에서 위임할 hellohandler 또는 hellocontroller 추가 하는 방식 변경
-//            HelloServletController helloController = new HelloServletController();
+            // front controller 에서 위임할 hellohandler 또는 hellocontroller 추가
+            HelloServletController helloController = new HelloServletController();
 
             // 서블릿 context 에 servlet 추가
             // 모든 요청을 받아 공통처리를 할 front controller
@@ -64,8 +58,8 @@ public class SpringServletApplication {
                     if(req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())){
                         String name = req.getParameter("name");
 
-                        HelloServletController helloBean = applicationContext.getBean(HelloServletController.class);
-                        String result = helloBean.hello(name);
+                        // front controller -> hello controller 응답 값
+                        String result = helloController.hello(name);
 
                         // 서블릿 컨테이너가 에러가 나지않는 이상 서블릿 상태 코드 생략 가능
                         // resp.setStatus(HttpStatus.OK.value());
@@ -87,6 +81,35 @@ public class SpringServletApplication {
             // 서블릿으로 들어오는 모든 요청 처리를 위해 와일드 카드
             .addMapping("/*");
         });
+
+        //#region - hello servlet
+        /*
+        // servlet container 생성
+        // 매개변수 ServletContextInitializer 를 이용하여 servlet 을 등록하는 작업을 수행
+        WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> {
+            // 서블릿 context 에 servlet 추가
+            servletContext.addServlet("hello", new HttpServlet() {
+                // 웹 프로그래밍은 웹 요청을받아서 만들어짐
+                // 요청 오브젝트, 응답 오브젝트
+                @Override
+                protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//                    super.service(req, resp);
+                    // 파라미터 받을 수 있도록 추가
+                    String name = req.getParameter("name");
+
+                    // 웹 응답 만들고 테스트
+                    resp.setStatus(HttpStatus.OK.value());
+                    resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+                    resp.setHeader("Content-Type", "text/plain");
+                    resp.getWriter().println("Hello Servlet : " + name);
+                }
+            })
+            // 서블릿 매핑 해당 요청으로 들어오는 것은 해당 서블릿이 처리를 하겠다
+            .addMapping("/hello");
+        });
+        */
+        //#endregion - hello servlet
+
 
         // tomcat servlet container 동작
         webServer.start();
