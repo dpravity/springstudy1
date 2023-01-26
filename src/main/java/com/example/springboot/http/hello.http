@@ -1,0 +1,4 @@
+### 테스트
+GET http://localhost:8080/hello?name=httptest
+Accept: */*
+Content-Type: text/plain
