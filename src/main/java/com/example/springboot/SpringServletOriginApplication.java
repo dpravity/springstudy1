@@ -4,6 +4,7 @@ package com.example.springboot;
 //import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.springboot.contorller.HelloServletController;
+import com.example.springboot.contorller.HelloServletOriginController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class SpringServletOriginApplication {
         WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> {
             // 서블릿 초기화하는 부분에
             // front controller 에서 위임할 hellohandler 또는 hellocontroller 추가
-            HelloServletController helloController = new HelloServletController();
+            HelloServletOriginController helloController = new HelloServletOriginController();
 
             // 서블릿 context 에 servlet 추가
             // 모든 요청을 받아 공통처리를 할 front controller

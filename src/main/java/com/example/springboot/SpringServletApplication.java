@@ -1,6 +1,7 @@
 package com.example.springboot;
 
 import com.example.springboot.contorller.HelloServletController;
+import com.example.springboot.service.SimpleHelloService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,8 @@ public class SpringServletApplication {
         // 스프링 컨테이너는 오브젝트를 만들어 직업 add 도 가능하나
         // 일반적으로는 어떤 클래스를 이용하여 Bean Object 를 생성할 것인가 라고 하는 Meta 정보를 넣어주는 방식으로 만듬
         applicationContext.registerBean(HelloServletController.class);
+        // HelloService Bean 생성 -> HelloServletController 생성자에 bean 을 찾아 파라미터 할당
+        applicationContext.registerBean(SimpleHelloService.class);
         // applicationContext 가 자신가 가진 구성 정보를 이용해서 컨테이너를 초기화
         applicationContext.refresh();
 
@@ -61,6 +64,7 @@ public class SpringServletApplication {
 
                     // 다국어, 인증, 보안, 모든 웹 요청에 대한 공통 기능
                     // HTTP request 3가지 요소
+                    // Mapping 작업
                     if(req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())){
                         String name = req.getParameter("name");
 
