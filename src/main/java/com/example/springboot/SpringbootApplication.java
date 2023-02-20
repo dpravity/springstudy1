@@ -1,20 +1,34 @@
 package com.example.springboot;
 
 import com.example.springboot.contorller.HelloController;
+import com.example.springboot.service.HelloService;
 import com.example.springboot.service.SimpleHelloService;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /*
 Spring Container 란?
 Business Objects(POJO) + Configuration Metadata 를 조합하여 내부의 Bean 이라고 불리는 오브젝트를 구성해서 서버 애플리케이션으로 만들어줌
  */
-@SpringBootApplication
+//@SpringBootApplication
+@Configuration
 public class SpringbootApplication {
+
+    // 팩토리 메소드
+    @Bean
+    public HelloController helloController(HelloService helloService){
+        return new HelloController(helloService);
+    }
+
+    @Bean
+    public HelloService helloService(){
+        return new SimpleHelloService();
+    }
 
     public static void main(String[] args) {
         System.out.println("hello container less standard alone");
@@ -22,7 +36,7 @@ public class SpringbootApplication {
         // 스프링 컨테이너 생성
         // ApplicationContext : 애플리케이션을 구성하는 정보를 담고 있음, Bean, Resources 등등
         // ApplicationContext 가 결국 스프링 컨테이너가 된다
-        GenericWebApplicationContext applicationContext = new GenericWebApplicationContext(){
+        AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext(){
             // 스프링 컨테이너 초기화
             @Override
             protected void onRefresh() {
@@ -39,8 +53,8 @@ public class SpringbootApplication {
                 webServer.start();
             }
         };
-        applicationContext.registerBean(HelloController.class);
-        applicationContext.registerBean(SimpleHelloService.class);
+        // 자바 코드로 된 구성정보가 존재하면 Bean object 를 생성
+        applicationContext.register(SpringbootApplication.class);
         // 스프링 컨테이너 초기화, 템플릿 메소드 패턴(상속을 통해 기능 확장)
         applicationContext.refresh();
     }
