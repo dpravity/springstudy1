@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Objects;
 
-@RequestMapping("/hello")
-public class HelloServletController {
+@RequestMapping(value = "/hello")
+public class HelloFactoryMethodController {
     private final HelloService helloService;
 
-    public HelloServletController(HelloService helloService) {
+    public HelloFactoryMethodController(HelloService helloService) {
         this.helloService = helloService;
     }
 
-    @GetMapping("")
+    @GetMapping(value = "")
     public String hello(String name){
         // DI 형태로 변경
 //        SimpleHelloService helloService = new SimpleHelloService();
