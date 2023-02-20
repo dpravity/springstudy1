@@ -1,12 +1,9 @@
 package com.example.springboot;
 
-import com.example.springboot.contorller.HelloController;
-import com.example.springboot.service.HelloService;
-import com.example.springboot.service.SimpleHelloService;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -17,18 +14,10 @@ Business Objects(POJO) + Configuration Metadata 를 조합하여 내부의 Bean 
  */
 //@SpringBootApplication
 @Configuration
+// @ConponentScan 컨테이너에 전달 -> 현재 패키지 -> 하위 패키지 @Component 붙은 모든 클래스를 Bean 으로 등록
+// applicationContext.register(SpringbootApplication.class); 으로부터 탐색
+@ComponentScan
 public class SpringbootApplication {
-
-    // 팩토리 메소드
-    @Bean
-    public HelloController helloController(HelloService helloService){
-        return new HelloController(helloService);
-    }
-
-    @Bean
-    public HelloService helloService(){
-        return new SimpleHelloService();
-    }
 
     public static void main(String[] args) {
         System.out.println("hello container less standard alone");
